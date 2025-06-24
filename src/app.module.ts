@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ProjectsModule } from './projects/projects.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
       }),
       inject: [ConfigService],
     }),
+    ProjectsModule,
   ],
   controllers: [AppController],
   providers: [
