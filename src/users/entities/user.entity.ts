@@ -3,9 +3,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Project } from '../../projects/entities/project.entity';
 
 @Entity()
 export class User {
@@ -24,4 +26,10 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Project, (project) => project.user, {
+    cascade: ['remove'],
+    onDelete: 'CASCADE',
+  })
+  projects: Project[];
 }
