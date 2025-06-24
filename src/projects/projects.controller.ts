@@ -26,7 +26,6 @@ export class ProjectsController {
   @Get()
   async findAll(@Req() req) {
     const userUUID = req.user.uuid;
-    console.log(req.user);
     return this.projectsService.findAllByUser(userUUID);
   }
 
