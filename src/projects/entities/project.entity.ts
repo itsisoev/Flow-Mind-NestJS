@@ -3,16 +3,12 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
-
-type Task = {
-  title: string;
-  description: string;
-  done: boolean;
-};
+import { Task } from './task.entity';
 
 @Entity()
 export class Project {
@@ -21,9 +17,6 @@ export class Project {
 
   @Column()
   title: string;
-
-  @Column('simple-json', { nullable: true })
-  tasks?: Task[];
 
   @Column()
   color: string;
@@ -38,4 +31,9 @@ export class Project {
     onDelete: 'CASCADE',
   })
   user: User;
+
+  @OneToMany(() => Task, (task) => task.project, {
+    cascade: true,
+  })
+  tasks: Task[];
 }

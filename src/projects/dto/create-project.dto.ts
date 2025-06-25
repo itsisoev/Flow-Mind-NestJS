@@ -1,16 +1,4 @@
-import { IsString, IsArray, ValidateNested, IsBoolean } from 'class-validator';
-import { Type } from 'class-transformer';
-
-class TaskDto {
-  @IsString()
-  title: string;
-
-  @IsString()
-  description: string;
-
-  @IsBoolean()
-  done: boolean;
-}
+import { IsString } from 'class-validator';
 
 export class CreateProjectDto {
   @IsString()
