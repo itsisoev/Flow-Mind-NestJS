@@ -4,6 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { User } from '../users/entities/user.entity';
+import { Task } from './entities/task.entity';
+import { CreateTaskDto } from './dto/create-task.dto';
 
 @Injectable()
 export class ProjectsService {
@@ -12,6 +14,8 @@ export class ProjectsService {
     private readonly projectRepository: Repository<Project>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Task)
+    private readonly taskRepository: Repository<Task>,
   ) {}
 
   async create(
@@ -41,12 +45,43 @@ export class ProjectsService {
   async findOneByUuidAndUser(uuid: string, userUUID: string): Promise<Project> {
     const project = await this.projectRepository.findOne({
       where: { uuid, user: { uuid: userUUID } },
-      relations: ['user'],
+      relations: ['user', 'tasks'],
     });
 
     if (!project) {
       throw new NotFoundException('Project not found or access denied');
     }
     return project;
+  }
+
+  async addTaskToProject(
+    projectUUID: string,
+    userUUID: string,
+    taskDto: CreateTaskDto,
+  ): Promise<Task> {
+    const project = await this.findOneByUuidAndUser(projectUUID, userUUID);
+
+    const newTask = this.taskRepository.create({
+      ...taskDto,
+      project,
+    });
+
+    return this.taskRepository.save(newTask);
+  }
+
+  async findTasksByProject(
+    projectUUID: string,
+    userUUID: string,
+  ): Promise<Task[]> {
+    const project = await this.projectRepository.findOne({
+      where: { uuid: projectUUID, user: { uuid: userUUID } },
+      relations: ['tasks', 'user'],
+    });
+
+    if (!project) {
+      throw new NotFoundException('Project not found or access denied');
+    }
+
+    return project.tasks;
   }
 }
