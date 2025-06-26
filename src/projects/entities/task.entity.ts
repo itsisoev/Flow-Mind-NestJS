@@ -20,8 +20,8 @@ export class Task {
   @Column({ type: 'enum', enum: ['low', 'medium', 'high'], default: 'medium' })
   priority: TaskPriority;
 
-  @Column({ nullable: true })
-  term?: Date | string;
+  @Column({ type: 'timestamp', nullable: true })
+  term?: Date;
 
   @ManyToOne(() => Project, (project) => project.tasks, { onDelete: 'CASCADE' })
   project: Project;

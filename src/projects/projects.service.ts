@@ -84,4 +84,17 @@ export class ProjectsService {
 
     return project.tasks;
   }
+
+  async updateTaskDoneStatus(
+    taskUUID: string,
+    done: boolean,
+  ) {
+    const task = await this.taskRepository.findOne({
+      where: { uuid: taskUUID },
+      relations: ['project', 'project.user'],
+    });
+
+    task.done = done;
+    return this.taskRepository.save(task);
+  }
 }
