@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   Req,
   UseGuards,
@@ -53,5 +54,15 @@ export class ProjectsController {
   async getTasksByProject(@Param('uuid') uuid: string, @Req() req) {
     const userUUID = req.user.uuid;
     return this.projectsService.findTasksByProject(uuid, userUUID);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('/tasks/:uuid')
+  async updateTaskStatus(
+    @Param('uuid') uuid: string,
+    @Body('done') done: boolean,
+    @Req() req,
+  ) {
+    return this.projectsService.updateTaskDoneStatus(uuid, done);
   }
 }
