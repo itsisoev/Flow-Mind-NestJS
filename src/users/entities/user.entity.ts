@@ -17,6 +17,9 @@ export class User {
   @Column()
   username: string;
 
+  @Column({ nullable: true })
+  telegramChatId?: number;
+
   @Column()
   @Exclude()
   password: string;

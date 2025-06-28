@@ -61,8 +61,8 @@ export class ProjectsController {
   async updateTaskStatus(
     @Param('uuid') uuid: string,
     @Body('done') done: boolean,
-    @Req() req,
+    @Body('status') status?: string,
   ) {
-    return this.projectsService.updateTaskDoneStatus(uuid, done);
+    return this.projectsService.updateTaskStatus(uuid, done, status);
   }
 }
