@@ -44,4 +44,12 @@ export class UsersService {
   async findUser(username: string) {
     return await this.userRepository.findOne({ where: { username } });
   }
+
+  async findByUUID(uuid: string): Promise<User | null> {
+    return this.userRepository.findOneBy({ uuid });
+  }
+
+  async update(user: User): Promise<User> {
+    return this.userRepository.save(user);
+  }
 }

@@ -4,8 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { User } from '../users/entities/user.entity';
-import { Task } from './entities/task.entity';
+import { Task, TaskStatus } from './entities/task.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
+import { TelegramNotifierService } from '../tg-bot/services/telegram-notifier.service';
 
 @Injectable()
 export class ProjectsService {
@@ -16,6 +17,7 @@ export class ProjectsService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
+    private readonly notifier: TelegramNotifierService,
   ) {}
 
   async create(
@@ -31,6 +33,15 @@ export class ProjectsService {
       ...createProjectDto,
       user,
     });
+
+    const savedProject = await this.projectRepository.save(project);
+
+    if (user) {
+      await this.notifier.notifyUser(
+        user.telegramChatId,
+        `✅ Создан новый проект: "${savedProject.title}"`,
+      );
+    }
 
     return this.projectRepository.save(project);
   }
@@ -66,6 +77,20 @@ export class ProjectsService {
       project,
     });
 
+    const savedTask = await this.taskRepository.save(newTask);
+
+    const user = project.user;
+
+    if (user && user.telegramChatId) {
+      const message = `✅ Новая задача добавлена в проект "${project.title}":
+📝 Заголовок: ${savedTask.title}
+📄 Описание: ${savedTask.description || '—'}
+📅 Срок: ${savedTask.term || '—'}
+🔥 Приоритет: ${savedTask.priority || '—'}`;
+
+      await this.notifier.notifyUser(user.telegramChatId, message);
+    }
+
     return this.taskRepository.save(newTask);
   }
 
@@ -85,16 +110,22 @@ export class ProjectsService {
     return project.tasks;
   }
 
-  async updateTaskDoneStatus(
-    taskUUID: string,
-    done: boolean,
-  ) {
+  async updateTaskStatus(taskUUID: string, done: boolean, status?: string) {
     const task = await this.taskRepository.findOne({
       where: { uuid: taskUUID },
       relations: ['project', 'project.user'],
     });
 
+    if (!task) {
+      throw new NotFoundException('Задача не найдена');
+    }
+
     task.done = done;
+
+    if (status && ['todo', 'in-progress', 'done'].includes(status)) {
+      task.status = status as TaskStatus;
+    }
+
     return this.taskRepository.save(task);
   }
 }

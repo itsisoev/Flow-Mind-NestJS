@@ -23,6 +23,10 @@ export class CreateTaskDto {
   priority?: 'low' | 'medium' | 'high';
 
   @IsOptional()
+  @IsEnum(['todo', 'in-progress', 'done'])
+  status?: 'todo' | 'in-progress' | 'done';
+
+  @IsOptional()
   @IsDateString()
   term?: string;
 }
