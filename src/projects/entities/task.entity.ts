@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Project } from './project.entity';
 
-export type TaskPriority = 'low' | 'medium' | 'high';
+export type TaskPriority = 'very-low' | 'low' | 'medium' | 'high' | 'urgent';
 export type TaskStatus = 'todo' | 'in-progress' | 'done';
 
 @Entity()
@@ -25,7 +25,11 @@ export class Task {
   })
   status: TaskStatus;
 
-  @Column({ type: 'enum', enum: ['low', 'medium', 'high'], default: 'medium' })
+  @Column({
+    type: 'enum',
+    enum: ['very-low', 'low', 'medium', 'high', 'urgent'],
+    default: 'medium',
+  })
   priority: TaskPriority;
 
   @Column({ type: 'timestamp', nullable: true })
