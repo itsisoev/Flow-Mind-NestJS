@@ -19,8 +19,8 @@ export class CreateTaskDto {
   done?: boolean;
 
   @IsOptional()
-  @IsEnum(['low', 'medium', 'high'])
-  priority?: 'low' | 'medium' | 'high';
+  @IsEnum(['very-low', 'low', 'medium', 'high', 'urgent'])
+  priority?: 'very-low' | 'low' | 'medium' | 'high' | 'urgent';
 
   @IsOptional()
   @IsEnum(['todo', 'in-progress', 'done'])
