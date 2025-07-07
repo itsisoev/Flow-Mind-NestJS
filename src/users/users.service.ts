@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as argon2 from 'argon2';
@@ -51,5 +51,14 @@ export class UsersService {
 
   async update(user: User): Promise<User> {
     return this.userRepository.save(user);
+  }
+
+  async searchUsers(query: string) {
+    return this.userRepository.find({
+      where: {
+        username: ILike(`%${query}%`),
+      },
+      take: 10,
+    });
   }
 }

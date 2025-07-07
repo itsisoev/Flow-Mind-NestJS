@@ -78,7 +78,6 @@ export class TgBotUpdate {
             userTokens.set(userId, loginResult.token);
             userUUIDMap.set(userId, loginResult.uuid);
 
-            // Вот здесь сохраняем chatId
             await this.tgBotService.saveTelegramChatId(
               loginResult.uuid,
               userId,
@@ -94,7 +93,6 @@ export class TgBotUpdate {
             userTokens.set(userId, result.token);
             userUUIDMap.set(userId, result.user.uuid);
 
-            // И здесь тоже сохраняем chatId
             await this.tgBotService.saveTelegramChatId(
               result.user.uuid,
               userId,

@@ -1,5 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Project } from './project.entity';
+import { User } from '../../users/entities/user.entity';
 
 export type TaskPriority = 'very-low' | 'low' | 'medium' | 'high' | 'urgent';
 export type TaskStatus = 'todo' | 'in-progress' | 'done';
@@ -37,4 +38,7 @@ export class Task {
 
   @ManyToOne(() => Project, (project) => project.tasks, { onDelete: 'CASCADE' })
   project: Project;
+
+  @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
+  owner: User;
 }
