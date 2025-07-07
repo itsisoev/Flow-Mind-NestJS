@@ -2,6 +2,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -31,6 +33,12 @@ export class Project {
     onDelete: 'CASCADE',
   })
   user: User;
+
+  @ManyToMany(() => User, (user) => user.participatedProjects, {
+    cascade: true,
+  })
+  @JoinTable()
+  participants: User[];
 
   @OneToMany(() => Task, (task) => task.project, {
     cascade: true,
