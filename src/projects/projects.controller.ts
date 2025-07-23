@@ -13,10 +13,14 @@ import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateTaskDto } from './dto/create-task.dto';
+import { TasksService } from './tasks.service';
 
 @Controller('projects')
 export class ProjectsController {
-  constructor(private readonly projectsService: ProjectsService) {}
+  constructor(
+    private readonly projectsService: ProjectsService,
+    private readonly tasksService: TasksService,
+  ) {}
 
   @UseGuards(JwtAuthGuard)
   @Post()
@@ -33,7 +37,7 @@ export class ProjectsController {
     @Req() req,
   ) {
     const userUUID = req.user.uuid;
-    return this.projectsService.addTaskToProject(uuid, userUUID, taskDto);
+    return this.tasksService.addTaskToProject(uuid, userUUID, taskDto);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -54,39 +58,26 @@ export class ProjectsController {
   @Get(':uuid/tasks')
   async getTasksByProject(@Param('uuid') uuid: string, @Req() req) {
     const userUUID = req.user.uuid;
-    return this.projectsService.findTasksByProject(uuid, userUUID);
+    return this.tasksService.findTasksByProject(uuid, userUUID);
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch('/tasks/:uuid')
   async updateTaskStatus(
     @Param('uuid') uuid: string,
+    @Req() req,
     @Body('done') done: boolean,
     @Body('status') status?: string,
   ) {
-    return this.projectsService.updateTaskStatus(uuid, done, status);
+    const userUUID = req.user.uuid;
+    return this.tasksService.updateTaskStatus(uuid, done, status, userUUID);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete('/tasks/:taskUuid')
   async deleteTask(@Param('taskUuid') uuid: string, @Req() req) {
     const userUUID = req.user.uuid;
-    return this.projectsService.deleteTask(uuid, userUUID);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Post(':uuid/participants/:participantUuid')
-  async addParticipant(
-    @Param('uuid') uuid: string,
-    @Param('participantUuid') participantUuid: string,
-    @Req() req,
-  ) {
-    const ownerUUID = req.user.uuid;
-    return this.projectsService.addParticipant(
-      uuid,
-      ownerUUID,
-      participantUuid,
-    );
+    return this.tasksService.deleteTask(uuid, userUUID);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -97,11 +88,7 @@ export class ProjectsController {
     @Req() req,
   ) {
     const fromUserUUID = req.user.uuid;
-    return this.projectsService.transferTask(
-      taskUUID,
-      fromUserUUID,
-      toUserUUID,
-    );
+    return this.tasksService.transferTask(taskUUID, fromUserUUID, toUserUUID);
   }
 
   @UseGuards(JwtAuthGuard)
