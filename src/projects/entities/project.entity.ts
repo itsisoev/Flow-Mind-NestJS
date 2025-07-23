@@ -34,12 +34,6 @@ export class Project {
   })
   user: User;
 
-  @ManyToMany(() => User, (user) => user.participatedProjects, {
-    cascade: true,
-  })
-  @JoinTable()
-  participants: User[];
-
   @OneToMany(() => Task, (task) => task.project, {
     cascade: true,
   })

@@ -7,6 +7,7 @@ import { ProjectsService } from '../../projects/projects.service';
 import { JwtService } from '@nestjs/jwt';
 import { CreateTaskDto } from '../../projects/dto/create-task.dto';
 import { Context } from 'telegraf';
+import { TasksService } from 'src/projects/tasks.service';
 
 @Injectable()
 export class TgBotService {
@@ -14,6 +15,7 @@ export class TgBotService {
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
     private readonly projectsService: ProjectsService,
+    private readonly tasksService: TasksService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -34,7 +36,7 @@ export class TgBotService {
   }
 
   async getTasks(projectUUID: string, userUUID: string) {
-    return this.projectsService.findTasksByProject(projectUUID, userUUID);
+    return this.tasksService.findTasksByProject(projectUUID, userUUID);
   }
 
   async createProject(
@@ -56,7 +58,7 @@ export class TgBotService {
     taskDto: CreateTaskDto,
     ctx: Context,
   ) {
-    const task = await this.projectsService.addTaskToProject(
+    const task = await this.tasksService.addTaskToProject(
       projectUUID,
       userUUID,
       taskDto,

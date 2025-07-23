@@ -36,7 +36,4 @@ export class User {
     onDelete: 'CASCADE',
   })
   projects: Project[];
-
-  @ManyToMany(() => Project, (project) => project.participants)
-  participatedProjects: Project[];
 }
